@@ -1,5 +1,5 @@
-public class Task{
-    private String description;
+public class Task {
+    private final String description;
     private boolean isDone;
 
     public Task(String description) {
@@ -15,10 +15,9 @@ public class Task{
         isDone = false;
     }
 
-    public String getStatusIcon() {
+    private String getStatusIcon() {
         return isDone ? "X" : " ";
     }
-
 
     @Override
     public String toString() {
