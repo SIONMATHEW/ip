@@ -1,7 +1,9 @@
+package kingsim;
+
 import java.util.Scanner;
 
 /**
- * KingSIM is a simple chatbot that can add tasks, list tasks,
+ * kingsim.KingSIM is a simple chatbot that can add tasks, list tasks,
  * and mark/unmark tasks as done.
  */
 public class KingSIM {
@@ -74,7 +76,7 @@ public class KingSIM {
 
     private static void printWelcome() {
         System.out.println(LINE);
-        System.out.println("Hello! I'm KingSIM");
+        System.out.println("Hello! I'm kingsim.KingSIM");
         System.out.println("What can I do for you?");
         System.out.println(LINE);
     }
@@ -153,7 +155,7 @@ public class KingSIM {
     }
 
     /**
-     * Parses user input into a Task (Todo/Deadline/Event).
+     * Parses user input into a kingsim.Task (kingsim.Todo/kingsim.Deadline/kingsim.Event).
      * Throws KingSimException if the input is invalid.
      */
     private static Task parseTask(String input) throws KingSimException {
@@ -182,7 +184,7 @@ public class KingSIM {
             String by = parts[1].trim();
 
             if (desc.isEmpty()) {
-                throw new KingSimException("Deadline description can't be empty.");
+                throw new KingSimException("kingsim.Deadline description can't be empty.");
             }
             if (by.isEmpty()) {
                 throw new KingSimException("Please add the due date after /by.");
@@ -210,7 +212,7 @@ public class KingSIM {
             String to = rest.substring(toPos + 5).trim();
 
             if (desc.isEmpty()) {
-                throw new KingSimException("Event name can't be empty.");
+                throw new KingSimException("kingsim.Event name can't be empty.");
             }
             if (from.isEmpty()) {
                 throw new KingSimException("Please include a start time after /from.");

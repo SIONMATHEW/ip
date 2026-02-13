@@ -1,5 +1,7 @@
+package kingsim;
+
 /**
- * Represents a Deadline task.
+ * Represents a kingsim.Deadline task.
  */
 public class Deadline extends Task {
     private final String by;
