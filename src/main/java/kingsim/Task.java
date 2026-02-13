@@ -1,3 +1,4 @@
+package kingsim;
 
 /**
  * Represents a task with a description and a done/not-done status.

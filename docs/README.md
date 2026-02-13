@@ -1,4 +1,4 @@
-# KingSIM User Guide
+# kingsim.KingSIM User Guide
 
 // Update the title above to match the actual product name
 
