@@ -1,7 +1,7 @@
 package kingsim;
 
 /**
- * Represents an kingsim.Event task .
+ * Represents an Event task
  */
 public class Event extends Task {
     private final String from;

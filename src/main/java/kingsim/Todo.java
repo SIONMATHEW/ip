@@ -1,7 +1,7 @@
 package kingsim;
 
 /**
- * Represents a kingsim.Todo task
+ * Represents a Todo task
  */
 public class Todo extends Task {
     public Todo(String description) {
