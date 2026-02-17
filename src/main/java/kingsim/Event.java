@@ -13,6 +13,14 @@ public class Event extends Task {
         this.to = to;
     }
 
+    String getFrom() {
+        return from;
+    }
+
+    String getTo() {
+        return to;
+    }
+
     @Override
     public String toString() {
         return "[E] " + super.toString() + " (from: " + from + " to: " + to + ")";

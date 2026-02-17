@@ -1,13 +1,14 @@
 package kingsim;
 
 import java.util.Scanner;
-import java.util.ArrayList;
 
 /**
- * KingSIM is a simple chatbot that can add tasks, list tasks, and mark/unmark tasks as done.
+ * kingsim.KingSIM is a simple chatbot that can add tasks, list tasks,
+ * and mark/unmark tasks as done.
  */
 public class KingSIM {
     private static final String LINE = "____________________________________________________________";
+    private static final int MAX_TASKS = 100;
 
     // Custom exception for input errors
     private static class KingSimException extends Exception {
@@ -20,7 +21,8 @@ public class KingSIM {
         printWelcome();
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        Task[] tasks = new Task[MAX_TASKS];
+        int taskCount = 0;
 
         while (true) {
             String input = scanner.nextLine().trim();
@@ -37,29 +39,29 @@ public class KingSIM {
                 }
 
                 if (lower.equals("list")) {
-                    printList(tasks);
+                    printList(tasks, taskCount);
                     continue;
                 }
 
                 if (lower.equals("mark") || lower.startsWith("mark ")) {
-                    handleMarkUnmark(tasks, input, true);
+                    handleMarkUnmark(tasks, taskCount, input, true);
                     continue;
                 }
 
                 if (lower.equals("unmark") || lower.startsWith("unmark ")) {
-                    handleMarkUnmark(tasks, input, false);
+                    handleMarkUnmark(tasks, taskCount, input, false);
                     continue;
                 }
 
-                if (lower.equals("delete") || lower.startsWith("delete ")) {
-                    handleDelete(tasks, input);
-                    continue;
+                if (taskCount >= MAX_TASKS) {
+                    throw new KingSimException("I’m full. I can only store up to " + MAX_TASKS + " tasks.");
                 }
 
                 Task newTask = parseTask(input);
-                tasks.add(newTask);
+                tasks[taskCount] = newTask;
+                taskCount++;
 
-                printAddTaskMessage(newTask, tasks.size());
+                printAddTaskMessage(newTask, taskCount);
 
             } catch (KingSimException e) {
                 printError(e.getMessage());
@@ -74,7 +76,7 @@ public class KingSIM {
 
     private static void printWelcome() {
         System.out.println(LINE);
-        System.out.println("Hello! I'm KingSIM");
+        System.out.println("Hello! I'm kingsim.KingSIM");
         System.out.println("What can I do for you?");
         System.out.println(LINE);
     }
@@ -99,10 +101,10 @@ public class KingSIM {
         System.out.println(LINE);
     }
 
-    private static void printList(ArrayList<Task> tasks) {
+    private static void printList(Task[] tasks, int taskCount) {
         System.out.println(LINE);
 
-        if (tasks.isEmpty()) {
+        if (taskCount == 0) {
             System.out.println("Your list is empty for now.");
             System.out.println("Add one with: todo <task>");
             System.out.println(LINE);
@@ -110,13 +112,13 @@ public class KingSIM {
         }
 
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
+        for (int i = 0; i < taskCount; i++) {
+            System.out.println((i + 1) + ". " + tasks[i]);
         }
         System.out.println(LINE);
     }
 
-    private static void handleMarkUnmark(ArrayList<Task> tasks, String input, boolean isMark)
+    private static void handleMarkUnmark(Task[] tasks, int taskCount, String input, boolean isMark)
             throws KingSimException {
         String command = isMark ? "mark" : "unmark";
         String numberPart = input.substring(command.length()).trim();
@@ -132,45 +134,17 @@ public class KingSIM {
             throw new KingSimException("That doesn’t look like a number. Try: " + command + " 1");
         }
 
-        if (index < 0 || index >= tasks.size()) {
+        if (index < 0 || index >= taskCount) {
             throw new KingSimException("That task number doesn’t exist yet.");
         }
 
         if (isMark) {
-            tasks.get(index).markDone();
-            printMarkMessage("Nice! I've marked this task as done:", tasks.get(index));
+            tasks[index].markDone();
+            printMarkMessage("Nice! I've marked this task as done:", tasks[index]);
         } else {
-            tasks.get(index).unmarkDone();
-            printMarkMessage("Alright, I've marked this task as not done yet:", tasks.get(index));
+            tasks[index].unmarkDone();
+            printMarkMessage("Alright, I've marked this task as not done yet:", tasks[index]);
         }
-    }
-
-    private static void handleDelete(ArrayList<Task> tasks, String input) throws KingSimException {
-        String command = "delete";
-        String numberPart = input.substring(command.length()).trim();
-
-        if (numberPart.isEmpty()) {
-            throw new KingSimException("Which task number? Try: delete 1");
-        }
-
-        int index;
-        try {
-            index = Integer.parseInt(numberPart) - 1;
-        } catch (NumberFormatException e) {
-            throw new KingSimException("That doesn’t look like a number. Try: delete 1");
-        }
-
-        if (index < 0 || index >= tasks.size()) {
-            throw new KingSimException("That task number doesn’t exist yet.");
-        }
-
-        Task removed = tasks.remove(index);
-
-        System.out.println(LINE);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removed);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println(LINE);
     }
 
     private static void printMarkMessage(String message, Task task) {
@@ -181,7 +155,7 @@ public class KingSIM {
     }
 
     /**
-     * Parses user input into a KingSIM Task
+     * Parses user input into a kingsim.Task (kingsim.Todo/kingsim.Deadline/kingsim.Event).
      * Throws KingSimException if the input is invalid.
      */
     private static Task parseTask(String input) throws KingSimException {
@@ -250,6 +224,6 @@ public class KingSIM {
             return new Event(desc, from, to);
         }
 
-        throw new KingSimException("Sorry, I don’t know that command. Try: list, todo, deadline, event, mark, unmark, delete, bye");
+        throw new KingSimException("Sorry, I don’t know that command. Try: list, todo, deadline, event, mark, unmark, bye");
     }
 }
