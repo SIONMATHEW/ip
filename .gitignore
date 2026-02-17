@@ -8,6 +8,8 @@
 /build/
 src/main/resources/docs/
 
+#Runtime Data
+data/
 # MacOS custom attributes files created by Finder
 .DS_Store
 *.iml
