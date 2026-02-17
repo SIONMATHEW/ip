@@ -1,7 +1,7 @@
 package kingsim;
 
 /**
- * Represents an kingsim.Event task .
+ * Represents an Event task
  */
 public class Event extends Task {
     private final String from;
@@ -11,6 +11,14 @@ public class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    String getFrom() {
+        return from;
+    }
+
+    String getTo() {
+        return to;
     }
 
     @Override

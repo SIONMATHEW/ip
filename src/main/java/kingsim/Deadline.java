@@ -1,7 +1,7 @@
 package kingsim;
 
 /**
- * Represents a kingsim.Deadline task.
+ * Represents a Deadline task.
  */
 public class Deadline extends Task {
     private final String by;
@@ -9,6 +9,10 @@ public class Deadline extends Task {
     public Deadline(String description, String by) {
         super(description);
         this.by = by;
+    }
+
+    String getBy() {
+        return by;
     }
 
     @Override
