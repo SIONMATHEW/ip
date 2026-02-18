@@ -7,6 +7,7 @@
 /.gradle/
 /build/
 src/main/resources/docs/
+src/main/java/META-INF/
 
 #Runtime Data
 data/
