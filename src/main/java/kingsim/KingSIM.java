@@ -1,6 +1,5 @@
 package kingsim;
 
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.io.IOException;
 
@@ -8,7 +7,10 @@ import java.io.IOException;
  * KingSIM is a simple chatbot that can add tasks, list tasks, and mark/unmark tasks as done.
  */
 public class KingSIM {
-    private static final String LINE = "____________________________________________________________";
+
+    private final Storage storage;
+    private final Ui ui;
+    private final ArrayList<Task> tasks;
 
     // Custom exception for input errors
     private static class KingSimException extends Exception {
@@ -17,16 +19,17 @@ public class KingSIM {
         }
     }
 
-    public static void main(String[] args) {
-        printWelcome();
+    public KingSIM(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        tasks = storage.load();
+    }
 
-        Storage storage = new Storage("./data/kingsim.txt");
-        ArrayList<Task> tasks = storage.load();
-
-        Scanner scanner = new Scanner(System.in);
+    public void run() {
+        ui.showWelcome();
 
         while (true) {
-            String input = scanner.nextLine().trim();
+            String input = ui.readCommand();
             try {
                 if (input.isEmpty()) {
                     throw new KingSimException("No input received. Try: list, todo <task>, deadline <task> /by <when>");
@@ -35,12 +38,12 @@ public class KingSIM {
                 String lower = input.toLowerCase();
 
                 if (lower.equals("bye")) {
-                    printBye();
+                    ui.showBye();
                     break;
                 }
 
                 if (lower.equals("list")) {
-                    printList(tasks);
+                    ui.showList(tasks);
                     continue;
                 }
 
@@ -64,18 +67,21 @@ public class KingSIM {
 
                 Task newTask = parseTask(input);
                 tasks.add(newTask);
-                printAddTaskMessage(newTask, tasks.size());
+                ui.showAddTask(newTask, tasks.size());
                 saveQuietly(storage, tasks);
 
             } catch (KingSimException e) {
-                printError(e.getMessage());
+                ui.showError(e.getMessage());
             } catch (Exception e) {
-                // Safety net: app should never crash due to unexpected input
-                printError("Oops—something went wrong. Try again?");
+                ui.showError("Oops—something went wrong. Try again?");
             }
         }
 
-        scanner.close();
+        ui.close();
+    }
+
+    public static void main(String[] args) {
+        new KingSIM("./data/kingsim.txt").run();
     }
 
     private static void saveQuietly(Storage storage, ArrayList<Task> tasks) throws KingSimException {
@@ -86,51 +92,7 @@ public class KingSIM {
         }
     }
 
-    private static void printWelcome() {
-        System.out.println(LINE);
-        System.out.println("Hello! I'm KingSIM");
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
-    }
-
-    private static void printBye() {
-        System.out.println(LINE);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(LINE);
-    }
-
-    private static void printError(String message) {
-        System.out.println(LINE);
-        System.out.println(message);
-        System.out.println(LINE);
-    }
-
-    private static void printAddTaskMessage(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        System.out.println(LINE);
-    }
-
-    private static void printList(ArrayList<Task> tasks) {
-        System.out.println(LINE);
-
-        if (tasks.isEmpty()) {
-            System.out.println("Your list is empty for now.");
-            System.out.println("Add one with: todo <task>");
-            System.out.println(LINE);
-            return;
-        }
-
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
-        }
-        System.out.println(LINE);
-    }
-
-    private static void handleMarkUnmark(ArrayList<Task> tasks, String input, boolean isMark)
+    private void handleMarkUnmark(ArrayList<Task> tasks, String input, boolean isMark)
             throws KingSimException {
         String command = isMark ? "mark" : "unmark";
         String numberPart = input.substring(command.length()).trim();
@@ -152,14 +114,14 @@ public class KingSIM {
 
         if (isMark) {
             tasks.get(index).markDone();
-            printMarkMessage("Nice! I've marked this task as done:", tasks.get(index));
+            ui.showMarkMessage("Nice! I've marked this task as done:", tasks.get(index));
         } else {
             tasks.get(index).unmarkDone();
-            printMarkMessage("Alright, I've marked this task as not done yet:", tasks.get(index));
+            ui.showMarkMessage("Alright, I've marked this task as not done yet:", tasks.get(index));
         }
     }
 
-    private static void handleDelete(ArrayList<Task> tasks, String input) throws KingSimException {
+    private void handleDelete(ArrayList<Task> tasks, String input) throws KingSimException {
         String command = "delete";
         String numberPart = input.substring(command.length()).trim();
 
@@ -179,19 +141,7 @@ public class KingSIM {
         }
 
         Task removed = tasks.remove(index);
-
-        System.out.println(LINE);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removed);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println(LINE);
-    }
-
-    private static void printMarkMessage(String message, Task task) {
-        System.out.println(LINE);
-        System.out.println(message);
-        System.out.println("  " + task);
-        System.out.println(LINE);
+        ui.showDeleteMessage(removed, tasks.size());
     }
 
     /**
