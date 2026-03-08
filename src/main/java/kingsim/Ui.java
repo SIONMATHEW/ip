@@ -15,7 +15,13 @@ public class Ui {
     }
 
     public String readCommand() {
-        return scanner.nextLine().trim();
+        String input = scanner.nextLine().trim();
+
+        if (input.contains(LINE)) {
+            input = input.substring(0, input.indexOf(LINE)).trim();
+        }
+
+        return input;
     }
 
     public void showWelcome() {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,11 +83,15 @@ public class Storage {
             if (type.equals("T")) {
                 t = new Todo(desc);
             } else if (type.equals("D")) {
-                if (parts.length < 4) return null;
-                t = new Deadline(desc, parts[3].trim());
+                if (parts.length < 4) {
+                    return null;
+                }
+                t = new Deadline(desc, LocalDateTime.parse(parts[3].trim()));
             } else if (type.equals("E")) {
-                if (parts.length < 5) return null;
-                t = new Event(desc, parts[3].trim(), parts[4].trim());
+                if (parts.length < 5) {
+                    return null;
+                }
+                t = new Event(desc, LocalDateTime.parse(parts[3].trim()), LocalDateTime.parse(parts[4].trim()));
             } else {
                 return null;
             }

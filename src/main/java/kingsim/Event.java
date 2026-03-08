@@ -1,28 +1,36 @@
 package kingsim;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Represents an Event task
  */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private static final DateTimeFormatter OUTPUT_FORMAT =
+            DateTimeFormatter.ofPattern("MMM d yyyy h:mm a");
 
-    public Event(String description, String from, String to) {
+    private final LocalDateTime from;
+    private final LocalDateTime to;
+
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;
         this.to = to;
     }
 
-    String getFrom() {
+    LocalDateTime getFrom() {
         return from;
     }
 
-    String getTo() {
+    LocalDateTime getTo() {
         return to;
     }
 
     @Override
     public String toString() {
-        return "[E] " + super.toString() + " (from: " + from + " to: " + to + ")";
+        return "[E] " + super.toString()
+                + " (from: " + from.format(OUTPUT_FORMAT)
+                + " to: " + to.format(OUTPUT_FORMAT) + ")";
     }
 }

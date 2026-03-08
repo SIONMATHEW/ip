@@ -1,9 +1,15 @@
 package kingsim;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 /**
  * Parses user input into tasks or command details.
  */
 public class Parser {
+    private static final DateTimeFormatter INPUT_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
     public static Task parseTask(String input) throws Exception {
         String lower = input.toLowerCase();
@@ -19,55 +25,71 @@ public class Parser {
         if (lower.equals("deadline") || lower.startsWith("deadline ")) {
             String rest = input.length() > 8 ? input.substring(8).trim() : "";
             if (rest.isEmpty()) {
-                throw new Exception("A deadline needs details. Try: deadline return book /by Sunday");
+                throw new Exception("A deadline needs details. Try: deadline return book /by 2026-03-10 1800");
             }
 
             String[] parts = rest.split(" /by ", 2);
             if (parts.length < 2) {
-                throw new Exception("Missing /by. Format: deadline <task> /by <when>");
+                throw new Exception("Missing /by. Format: deadline <task> /by yyyy-MM-dd HHmm");
             }
 
             String desc = parts[0].trim();
-            String by = parts[1].trim();
+            String byText = parts[1].trim();
 
             if (desc.isEmpty()) {
                 throw new Exception("Deadline description can't be empty.");
             }
-            if (by.isEmpty()) {
+            if (byText.isEmpty()) {
                 throw new Exception("Please add the due date after /by.");
             }
 
-            return new Deadline(desc, by);
+            try {
+                LocalDateTime by = LocalDateTime.parse(byText, INPUT_FORMAT);
+                return new Deadline(desc, by);
+            } catch (DateTimeParseException e) {
+                throw new Exception("Use date and time format yyyy-MM-dd HHmm, e.g. 2026-03-10 1800");
+            }
         }
 
         if (lower.equals("event") || lower.startsWith("event ")) {
             String rest = input.length() > 5 ? input.substring(5).trim() : "";
             if (rest.isEmpty()) {
-                throw new Exception("An event needs details. Try: event meeting /from 2pm /to 4pm");
+                throw new Exception("An event needs details. Try: event meeting /from 2026-03-10 1400 /to 2026-03-10 1600");
             }
 
             int fromPos = rest.indexOf(" /from ");
             int toPos = rest.indexOf(" /to ");
 
             if (fromPos == -1 || toPos == -1 || toPos < fromPos + 7) {
-                throw new Exception("Format: event <name> /from <start> /to <end>");
+                throw new Exception("Format: event <name> /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
             }
 
             String desc = rest.substring(0, fromPos).trim();
-            String from = rest.substring(fromPos + 7, toPos).trim();
-            String to = rest.substring(toPos + 5).trim();
+            String fromText = rest.substring(fromPos + 7, toPos).trim();
+            String toText = rest.substring(toPos + 5).trim();
 
             if (desc.isEmpty()) {
                 throw new Exception("Event name can't be empty.");
             }
-            if (from.isEmpty()) {
-                throw new Exception("Please include a start time after /from.");
+            if (fromText.isEmpty()) {
+                throw new Exception("Please include a start date and time after /from.");
             }
-            if (to.isEmpty()) {
-                throw new Exception("Please include an end time after /to.");
+            if (toText.isEmpty()) {
+                throw new Exception("Please include an end date and time after /to.");
             }
 
-            return new Event(desc, from, to);
+            try {
+                LocalDateTime from = LocalDateTime.parse(fromText, INPUT_FORMAT);
+                LocalDateTime to = LocalDateTime.parse(toText, INPUT_FORMAT);
+
+                if (to.isBefore(from)) {
+                    throw new Exception("Event end time cannot be before start time.");
+                }
+
+                return new Event(desc, from, to);
+            } catch (DateTimeParseException e) {
+                throw new Exception("Use date and time format yyyy-MM-dd HHmm, e.g. 2026-03-10 1400");
+            }
         }
 
         throw new Exception("Sorry, I don’t know that command. Try: list, todo, deadline, event, mark, unmark, delete, bye");
