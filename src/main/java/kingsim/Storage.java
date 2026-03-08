@@ -8,13 +8,26 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles loading tasks from the file and saving tasks to the file.
+ */
 public class Storage {
     private final Path filePath;
 
+    /**
+     * Creates a storage object using the given relative file path.
+     *
+     * @param relativePath Relative path to the data file.
+     */
     public Storage(String relativePath) {
         this.filePath = Paths.get(relativePath);
     }
 
+    /**
+     * Loads tasks from the data file.
+     *
+     * @return List of tasks loaded from the file.
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
@@ -35,6 +48,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the given tasks to the data file.
+     *
+     * @param tasks Tasks to be saved.
+     * @throws IOException If writing to the file fails.
+     */
     public void save(ArrayList<Task> tasks) throws IOException {
         Path parent = filePath.getParent();
         if (parent != null && !Files.exists(parent)) {
@@ -66,7 +85,11 @@ public class Storage {
     }
 
     /**
-     * Corruption handling: returns null for invalid lines (skip them).
+     * Returns the decoded task from a line in the data file.
+     * If the line is invalid, null is returned.
+     *
+     * @param line One line from the data file.
+     * @return Decoded task, or null if the line is invalid.
      */
     private Task decode(String line) {
         try {

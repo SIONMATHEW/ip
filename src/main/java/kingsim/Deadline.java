@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Represents a Deadline task.
+ * Represents a deadline task.
  */
 public class Deadline extends Task {
     private static final DateTimeFormatter OUTPUT_FORMAT =
@@ -12,6 +12,12 @@ public class Deadline extends Task {
 
     private final LocalDateTime by;
 
+    /**
+     * Creates a deadline task with the given description and deadline.
+     *
+     * @param description Description of the deadline task.
+     * @param by Deadline date and time.
+     */
     public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;

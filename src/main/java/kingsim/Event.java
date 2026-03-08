@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Represents an Event task
+ * Represents an event task.
  */
 public class Event extends Task {
     private static final DateTimeFormatter OUTPUT_FORMAT =
@@ -13,6 +13,13 @@ public class Event extends Task {
     private final LocalDateTime from;
     private final LocalDateTime to;
 
+    /**
+     * Creates an event task with the given description, start time, and end time.
+     *
+     * @param description Description of the event.
+     * @param from Start date and time of the event.
+     * @param to End date and time of the event.
+     */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;

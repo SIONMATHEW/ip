@@ -3,7 +3,7 @@ package kingsim;
 import java.io.IOException;
 
 /**
- * KingSIM is a simple chatbot that can add tasks, list tasks, and mark/unmark tasks as done.
+ * Represents the main KingSIM chatbot application.
  */
 public class KingSIM {
 
@@ -11,19 +11,29 @@ public class KingSIM {
     private final Ui ui;
     private final TaskList tasks;
 
-    // Custom exception for input errors
+    /**
+     * Represents an exception caused by invalid user input.
+     */
     private static class KingSimException extends Exception {
         public KingSimException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Creates a KingSIM chatbot using the given file path for storage.
+     *
+     * @param filePath Path to the data file.
+     */
     public KingSIM(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
         tasks = new TaskList(storage.load());
     }
 
+    /**
+     * Runs the chatbot until the user exits.
+     */
     public void run() {
         ui.showWelcome();
 
@@ -84,6 +94,11 @@ public class KingSIM {
         ui.close();
     }
 
+    /**
+     * Starts the chatbot application.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         new KingSIM("./data/kingsim.txt").run();
     }

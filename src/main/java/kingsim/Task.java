@@ -7,19 +7,35 @@ public class Task {
     private final String description;
     private boolean isDone;
 
+    /**
+     * Creates a task with the given description.
+     *
+     * @param description Description of the task.
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Marks this task as done.
+     */
     public void markDone() {
         isDone = true;
     }
 
+    /**
+     * Marks this task as not done.
+     */
     public void unmarkDone() {
         isDone = false;
     }
 
+    /**
+     * Returns the description of this task.
+     *
+     * @return Description of the task.
+     */
     public String getDescription() {
         return description;
     }

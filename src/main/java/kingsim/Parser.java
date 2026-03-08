@@ -11,6 +11,13 @@ public class Parser {
     private static final DateTimeFormatter INPUT_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
+    /**
+     * Parses user input and returns the corresponding task.
+     *
+     * @param input User input entered in the console.
+     * @return Task created from the input.
+     * @throws Exception If the input format is invalid.
+     */
     public static Task parseTask(String input) throws Exception {
         String lower = input.toLowerCase();
 
@@ -95,6 +102,14 @@ public class Parser {
         throw new Exception("Sorry, I don’t know that command. Try: list, todo, deadline, event, mark, unmark, delete, bye");
     }
 
+    /**
+     * Parses the task index from a command such as mark, unmark, or delete.
+     *
+     * @param input Full user input.
+     * @param command Command name at the start of the input.
+     * @return Zero-based task index.
+     * @throws Exception If the index is missing or invalid.
+     */
     public static int parseTaskIndex(String input, String command) throws Exception {
         String numberPart = input.substring(command.length()).trim();
 
