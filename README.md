@@ -1,7 +1,11 @@
-# kingsim.KingSIM project template
+# KingSIM project template
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+KingSIM is a command-line chatbot that helps users manage todos, deadlines, and events.
 
+## User Guide
+See the full user guide here:
+
+https://SIONMATHEW.github.io/ip/
 ## Setting up in Intellij
 
 Prerequisites: JDK 17, update Intellij to the most recent version.
