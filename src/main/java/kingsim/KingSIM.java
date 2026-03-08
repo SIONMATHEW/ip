@@ -46,6 +46,11 @@ public class KingSIM {
                     continue;
                 }
 
+                if (lower.equals("find") || lower.startsWith("find ")) {
+                    handleFind(input);
+                    continue;
+                }
+
                 if (lower.equals("mark") || lower.startsWith("mark ")) {
                     handleMarkUnmark(input, true);
                     saveQuietly();
@@ -89,6 +94,16 @@ public class KingSIM {
         } catch (IOException e) {
             throw new KingSimException("I couldn't save your tasks to disk.");
         }
+    }
+
+    private void handleFind(String input) throws KingSimException {
+        String keyword = input.substring(5).trim();
+
+        if (keyword.isEmpty()) {
+            throw new KingSimException("Please provide a keyword to search. Try: find book");
+        }
+
+        ui.showFindResults(tasks.find(keyword));
     }
 
     private void handleMarkUnmark(String input, boolean isMark) throws Exception {

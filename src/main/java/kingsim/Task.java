@@ -20,7 +20,7 @@ public class Task {
         isDone = false;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
