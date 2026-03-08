@@ -94,6 +94,12 @@ public class KingSIM {
         new KingSIM("./data/kingsim.txt").run();
     }
 
+    /**
+     * Saves the current task list to storage.
+     *
+     * @throws KingSimException If saving to the data file fails.
+     */
+
     private void saveQuietly() throws KingSimException {
         try {
             storage.save(tasks.getAll());
@@ -117,6 +123,13 @@ public class KingSIM {
         ui.showFindResults(tasks.find(keyword));
     }
 
+    /**
+     * Marks or unmarks the task specified in the user input.
+     *
+     * @param input Full user input for the mark or unmark command.
+     * @param isMark True to mark the task as done, false to unmark it.
+     * @throws KingSimException If the task number is missing or invalid.
+     */
     private void handleMarkUnmark(String input, boolean isMark) throws KingSimException {
         String command = isMark ? "mark" : "unmark";
         int index = Parser.parseTaskIndex(input, command);
@@ -133,6 +146,12 @@ public class KingSIM {
             ui.showMarkMessage("Alright, I've marked this task as not done yet:", tasks.get(index));
         }
     }
+    /**
+     * Deletes the task specified in the user input.
+     *
+     * @param input Full user input for the delete command.
+     * @throws KingSimException If the task number is missing or invalid.
+     */
 
     private void handleDelete(String input) throws KingSimException {
         String command = "delete";
