@@ -101,7 +101,12 @@ public class KingSIM {
             throw KingSimException.saveFailed();
         }
     }
-
+    /**
+     * Finds and shows tasks whose descriptions contain the given keyword.
+     *
+     * @param input Full user input for the find command.
+     * @throws KingSimException If no search keyword is provided.
+     */
     private void handleFind(String input) throws KingSimException {
         String keyword = input.length() > 4 ? input.substring(4).trim() : "";
 

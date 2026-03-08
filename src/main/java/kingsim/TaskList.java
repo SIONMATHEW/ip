@@ -86,10 +86,13 @@ public class TaskList {
      * @param keyword Keyword used to search task descriptions.
      * @return List of matching tasks.
      */
+
     public ArrayList<Task> find(String keyword) {
         ArrayList<Task> matches = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase();
+
         for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+            if (task.getDescription().toLowerCase().contains(lowerKeyword)) {
                 matches.add(task);
             }
         }
