@@ -72,7 +72,7 @@ public class Ui {
         System.out.println(LINE);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s") + " in the list.");
         System.out.println(LINE);
     }
 

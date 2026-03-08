@@ -16,15 +16,15 @@ public class Parser {
      *
      * @param input User input entered in the console.
      * @return Task created from the input.
-     * @throws Exception If the input format is invalid.
+     * @throws KingSimException If the input format is invalid.
      */
-    public static Task parseTask(String input) throws Exception {
+    public static Task parseTask(String input) throws KingSimException {
         String lower = input.toLowerCase();
 
         if (lower.equals("todo") || lower.startsWith("todo ")) {
             String desc = input.length() > 4 ? input.substring(4).trim() : "";
             if (desc.isEmpty()) {
-                throw new Exception("Your todo needs a description. Try: todo buy milk");
+                throw KingSimException.emptyTodo();
             }
             return new Todo(desc);
         }
@@ -32,43 +32,43 @@ public class Parser {
         if (lower.equals("deadline") || lower.startsWith("deadline ")) {
             String rest = input.length() > 8 ? input.substring(8).trim() : "";
             if (rest.isEmpty()) {
-                throw new Exception("A deadline needs details. Try: deadline return book /by 2026-03-10 1800");
+                throw KingSimException.incompleteDeadline();
             }
 
             String[] parts = rest.split(" /by ", 2);
             if (parts.length < 2) {
-                throw new Exception("Missing /by. Format: deadline <task> /by yyyy-MM-dd HHmm");
+                throw KingSimException.missingBy();
             }
 
             String desc = parts[0].trim();
             String byText = parts[1].trim();
 
             if (desc.isEmpty()) {
-                throw new Exception("Deadline description can't be empty.");
+                throw KingSimException.emptyDeadlineDescription();
             }
             if (byText.isEmpty()) {
-                throw new Exception("Please add the due date after /by.");
+                throw KingSimException.emptyDeadlineDate();
             }
 
             try {
                 LocalDateTime by = LocalDateTime.parse(byText, INPUT_FORMAT);
                 return new Deadline(desc, by);
             } catch (DateTimeParseException e) {
-                throw new Exception("Use date and time format yyyy-MM-dd HHmm, e.g. 2026-03-10 1800");
+                throw KingSimException.invalidDateTime("2026-03-10 1800");
             }
         }
 
         if (lower.equals("event") || lower.startsWith("event ")) {
             String rest = input.length() > 5 ? input.substring(5).trim() : "";
             if (rest.isEmpty()) {
-                throw new Exception("An event needs details. Try: event meeting /from 2026-03-10 1400 /to 2026-03-10 1600");
+                throw KingSimException.incompleteEvent();
             }
 
             int fromPos = rest.indexOf(" /from ");
             int toPos = rest.indexOf(" /to ");
 
             if (fromPos == -1 || toPos == -1 || toPos < fromPos + 7) {
-                throw new Exception("Format: event <name> /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
+                throw KingSimException.invalidEventFormat();
             }
 
             String desc = rest.substring(0, fromPos).trim();
@@ -76,13 +76,13 @@ public class Parser {
             String toText = rest.substring(toPos + 5).trim();
 
             if (desc.isEmpty()) {
-                throw new Exception("Event name can't be empty.");
+                throw KingSimException.emptyEventName();
             }
             if (fromText.isEmpty()) {
-                throw new Exception("Please include a start date and time after /from.");
+                throw KingSimException.emptyEventStart();
             }
             if (toText.isEmpty()) {
-                throw new Exception("Please include an end date and time after /to.");
+                throw KingSimException.emptyEventEnd();
             }
 
             try {
@@ -90,16 +90,16 @@ public class Parser {
                 LocalDateTime to = LocalDateTime.parse(toText, INPUT_FORMAT);
 
                 if (to.isBefore(from)) {
-                    throw new Exception("Event end time cannot be before start time.");
+                    throw KingSimException.invalidEventRange();
                 }
 
                 return new Event(desc, from, to);
             } catch (DateTimeParseException e) {
-                throw new Exception("Use date and time format yyyy-MM-dd HHmm, e.g. 2026-03-10 1400");
+                throw KingSimException.invalidDateTime("2026-03-10 1400");
             }
         }
 
-        throw new Exception("Sorry, I don’t know that command. Try: list, todo, deadline, event, mark, unmark, delete, bye");
+        throw KingSimException.unknownCommand();
     }
 
     /**
@@ -108,19 +108,19 @@ public class Parser {
      * @param input Full user input.
      * @param command Command name at the start of the input.
      * @return Zero-based task index.
-     * @throws Exception If the index is missing or invalid.
+     * @throws KingSimException If the index is missing or invalid.
      */
-    public static int parseTaskIndex(String input, String command) throws Exception {
+    public static int parseTaskIndex(String input, String command) throws KingSimException {
         String numberPart = input.substring(command.length()).trim();
 
         if (numberPart.isEmpty()) {
-            throw new Exception("Which task number? Try: " + command + " 1");
+            throw KingSimException.missingNumber(command);
         }
 
         try {
             return Integer.parseInt(numberPart) - 1;
         } catch (NumberFormatException e) {
-            throw new Exception("That doesn’t look like a number. Try: " + command + " 1");
+            throw KingSimException.invalidNumber(command);
         }
     }
 }

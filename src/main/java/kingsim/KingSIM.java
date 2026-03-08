@@ -12,15 +12,6 @@ public class KingSIM {
     private final TaskList tasks;
 
     /**
-     * Represents an exception caused by invalid user input.
-     */
-    private static class KingSimException extends Exception {
-        public KingSimException(String message) {
-            super(message);
-        }
-    }
-
-    /**
      * Creates a KingSIM chatbot using the given file path for storage.
      *
      * @param filePath Path to the data file.
@@ -41,7 +32,7 @@ public class KingSIM {
             String input = ui.readCommand();
             try {
                 if (input.isEmpty()) {
-                    throw new KingSimException("No input received. Try: list, todo <task>, deadline <task> /by <when>");
+                    throw KingSimException.emptyInput();
                 }
 
                 String lower = input.toLowerCase();
@@ -87,7 +78,7 @@ public class KingSIM {
             } catch (KingSimException e) {
                 ui.showError(e.getMessage());
             } catch (Exception e) {
-                ui.showError(e.getMessage());
+                ui.showError("Something unexpected happened. KingSIM needs a second to recover.");
             }
         }
 
@@ -107,26 +98,26 @@ public class KingSIM {
         try {
             storage.save(tasks.getAll());
         } catch (IOException e) {
-            throw new KingSimException("I couldn't save your tasks to disk.");
+            throw KingSimException.saveFailed();
         }
     }
 
     private void handleFind(String input) throws KingSimException {
-        String keyword = input.substring(5).trim();
+        String keyword = input.length() > 4 ? input.substring(4).trim() : "";
 
         if (keyword.isEmpty()) {
-            throw new KingSimException("Please provide a keyword to search. Try: find book");
+            throw KingSimException.emptyFindKeyword();
         }
 
         ui.showFindResults(tasks.find(keyword));
     }
 
-    private void handleMarkUnmark(String input, boolean isMark) throws Exception {
+    private void handleMarkUnmark(String input, boolean isMark) throws KingSimException {
         String command = isMark ? "mark" : "unmark";
         int index = Parser.parseTaskIndex(input, command);
 
         if (index < 0 || index >= tasks.size()) {
-            throw new KingSimException("That task number doesn’t exist yet.");
+            throw KingSimException.invalidTaskNumber();
         }
 
         if (isMark) {
@@ -138,12 +129,12 @@ public class KingSIM {
         }
     }
 
-    private void handleDelete(String input) throws Exception {
+    private void handleDelete(String input) throws KingSimException {
         String command = "delete";
         int index = Parser.parseTaskIndex(input, command);
 
         if (index < 0 || index >= tasks.size()) {
-            throw new KingSimException("That task number doesn’t exist yet.");
+            throw KingSimException.invalidTaskNumber();
         }
 
         Task removed = tasks.remove(index);
